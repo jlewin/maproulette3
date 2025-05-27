@@ -4,7 +4,7 @@ name: Pull Request Validation
 
 on:
   pull_request:
-      - '**' # Trigger only on pull requests targeting the main branch
+      branches: [main] # Trigger only on pull requests targeting the main branch
 
 jobs:
   validate:
