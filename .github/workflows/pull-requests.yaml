@@ -2,9 +2,7 @@
 
 name: Pull Request Validation
 
-on:
-  pull_request:
-      branches: [main] # Trigger only on pull requests targeting the main branch
+on: [pull_request]
 
 jobs:
   validate:
@@ -32,4 +30,4 @@ jobs:
         NODE_OPTIONS: --max-old-space-size=4096
 
     - name: Run the tests
-      run: npm run test -- --coverage
+      run: npm run test
