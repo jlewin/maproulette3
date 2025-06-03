@@ -17,6 +17,7 @@ import { addError } from "../Error/Error";
 import { toLatLngBounds } from "../MapBounds/MapBounds";
 import RequestStatus from "../Server/RequestStatus";
 import messages from "./Messages";
+import { stringify as wtkStringify } from "wkt";
 
 // Editor option constants based on constants defined on server
 export const NONE = -1;
@@ -263,10 +264,21 @@ export const constructRapidURI = function (task, mapBounds, options, replacedCom
 
   const sourceComponent = "source=" + encodeURIComponent(task.parent.checkinSource);
 
-  const datasetUrl = task.parent?.datasetUrl
+  let datasetUrl = task.parent?.datasetUrl
     ? "data=" + encodeURIComponent(task.parent.datasetUrl)
     : null;
+  const feature = task.geometries?.features?.[0];
 
+  // If the task has a feature with geometry of type polygon/multipolygon, serialize it into
+  // the data parameter in wtk format
+  if (feature) {
+    switch ( feature.geometry.type) {
+      case "Polygon":
+      case "MultiPolygon":
+        datasetUrl = "data=" + encodeURIComponent(wtkStringify(feature.geometry));
+        break;
+    }
+  }
   const presetsComponent = _isEmpty(task.parent.presets)
     ? null
     : "presets=" + encodeURIComponent(task.parent.presets.join(","));
